@@ -1,1 +1,1 @@
-Note: The test does not check UI issue. It is a E2E check
+Note: It is an E2E test and all UI are correct
