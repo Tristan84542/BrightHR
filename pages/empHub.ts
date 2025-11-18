@@ -2,6 +2,7 @@ import {Page, expect} from '@playwright/test';
 import { Employee } from '../object/employee';
 
 export let startYear = 0;
+let newEmpId: string;
 export class empHub{
     
     constructor(private page: Page){}
@@ -31,7 +32,7 @@ export class empHub{
         let datepicker = this.page.getByTestId('daypicker-panel');
         let splitDate = newEmployee.startDate.split(" ");
         let labelDate = splitDate[0] + " " + splitDate[2] + " " + splitDate[1] + " " + splitDate[3];
-        console.log(labelDate);
+        //console.log(labelDate);
         await datepicker.getByLabel(labelDate).click();
         //Date should be set
         await expect(this.page.locator('#startDate')).toHaveText(newEmployee.startDate);
@@ -40,7 +41,15 @@ export class empHub{
         //Save button should be enabled;
         let saveBtn = this.page.getByRole('button', {name: 'Save new employee'});
         await expect(saveBtn).toBeEnabled();
+        //This should make sure employee is created before closing popup.
+        const resPromise = this.page.waitForResponse(res => 
+            res.url() === 'https://sandbox-api.brighthr.com/v1/employee' 
+            && res.status() === 201 && res.request().method() === 'POST');
         await saveBtn.click();
+        const response = await resPromise;
+        const responseJson = await response.json();
+        newEmpId = responseJson.id;
+        //console.log(newEmpId);
         //Close popup
         await this.page.getByTestId('background').getByLabel('Close modal').click();
     }
@@ -52,9 +61,10 @@ export class empHub{
     }
 
     async openNewEmpPro(newEmp: Employee){
-        const fullName = newEmp.firstName + " " + newEmp.lastName;
-        const child = this.page.getByText(fullName);
-        const newEmpWidget = this.page.getByRole('generic').filter({ has: child});
-        await newEmpWidget.getByRole('link').click();
+        const resPromise = this.page.waitForResponse(res =>
+            res.url() === 'https://sandbox-api.brighthr.com/v1/rota/shift/settings'
+            && res.status() === 200 && res.request().method() === 'GET'
+        );
+        await this.page.locator(`[href$="${newEmpId}"]`).click();
     }
 }

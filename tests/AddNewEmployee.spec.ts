@@ -8,7 +8,7 @@ import { empProfile } from '../pages/empProfile';
 test('Add new employee', async({ page }) => {
     
     const newEmp = initEmp();
-    console.log(newEmp);
+    //console.log(newEmp);
     //Login 
     const tp = new login(page);
     await tp.goto('https://sandbox-app.brighthr.com');
