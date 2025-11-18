@@ -1,8 +1,6 @@
 import {Page, expect} from '@playwright/test';
-import { Employee } from '../object/employee';
+import { employee } from '../object/employee';
 
-export let startYear = 0;
-let newEmpId: string;
 export class empHub{
     
     constructor(private page: Page){}
@@ -11,7 +9,7 @@ export class empHub{
         await this.page.getByRole('button', {name : 'Add employee'}).click();
     }
 
-    async saveNewEmp(newEmployee: Employee){
+    async saveNewEmp(newEmployee: employee){
         const curYear = new Date().getFullYear();
         const curMonth = new Date().toLocaleString('en-US', {month: 'long'});
         await this.page.locator('#firstName').fill(newEmployee.firstName);
@@ -48,23 +46,19 @@ export class empHub{
         await saveBtn.click();
         const response = await resPromise;
         const responseJson = await response.json();
-        newEmpId = responseJson.id;
-        //console.log(newEmpId);
         //Close popup
         await this.page.getByTestId('background').getByLabel('Close modal').click();
+        return responseJson.id;
     }
 
     //Check new user full name is visible on new employee hub
-    async evalNewEmp(newEmp: Employee){
+    async evalEmp(newEmp: employee){
         const fullName = newEmp.firstName + " " + newEmp.lastName;
         await expect(this.page.getByText(fullName)).toBeVisible();
     }
 
-    async openNewEmpPro(newEmp: Employee){
-        const resPromise = this.page.waitForResponse(res =>
-            res.url() === 'https://sandbox-api.brighthr.com/v1/rota/shift/settings'
-            && res.status() === 200 && res.request().method() === 'GET'
-        );
-        await this.page.locator(`[href$="${newEmpId}"]`).click();
+    async openNewEmpPro(newEmp: employee){
+        await this.page.locator(`[href$="${newEmp.uid}"]`).click();
+        await this.page.waitForLoadState('networkidle');
     }
 }

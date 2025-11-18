@@ -4,5 +4,7 @@ export class home{
     constructor(private page: Page){}
     async goEmpHub(){
         await this.page.getByTitle('Employees').click();
+        await this.page.waitForLoadState('networkidle');
+        await this.page.waitForTimeout(2000);
     }
 }
