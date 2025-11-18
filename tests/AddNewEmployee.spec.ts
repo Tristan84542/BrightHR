@@ -25,6 +25,8 @@ test('Add new employee', async({ page }) => {
     const emp2 = initEmp();
     await emp.addEmployer();
     await emp.saveNewEmp(emp2);
+    //Nav to dashboard
+    await hp.goDashboard();
     //Nav to employee tab again
     await hp.goEmpHub();
 

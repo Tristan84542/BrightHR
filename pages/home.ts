@@ -4,5 +4,10 @@ export class home{
     constructor(private page: Page){}
     async goEmpHub(){
         await this.page.getByTitle('Employees').click();
+        await this.page.waitForLoadState('load');
+    }
+    async goDashboard(){
+        await this.page.getByTitle('Home').click();
+        await this.page.waitForLoadState('load');
     }
 }
