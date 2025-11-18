@@ -2,7 +2,7 @@ import {test, expect} from '@playwright/test';
 import { Employee, initEmp } from '../object/employee';
 import { login } from '../pages/login';
 import { home } from '../pages/home';
-import { empHub } from '../pages/EmpHub';
+import { empHub } from '../pages/empHub';
 import { empProfile } from '../pages/empProfile';
 
 test('Add new employee', async({ page }) => {
