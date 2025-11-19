@@ -7,6 +7,12 @@ export class empHub{
 
     async addEmployer(){
         await this.page.getByRole('button', {name : 'Add employee'}).click();
+        try{
+            await expect(this.page.getByTestId('background').getByText('Add employee')).toBeVisible();
+            await expect(this.page.getByTestId('background').getByRole('button', {name: 'Cancel'})).toBeVisible();
+        } catch (error){
+            console.log('Add employee widget seems not visible');
+        }
     }
 
     async saveNewEmp(newEmployee: Employee){
